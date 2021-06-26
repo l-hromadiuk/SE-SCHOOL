@@ -13,7 +13,7 @@ module.exports=function verify(req, res, next) {
 
     } catch (err) {
 
-        res.status(400) / send('Your token is invalid');
+        res.status(400).send('Your token is invalid');
 
     }
 }
