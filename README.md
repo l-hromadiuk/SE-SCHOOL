@@ -20,36 +20,30 @@
 
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/emailex.png)
 
+Також покладемо стандартне обмеження на мінімальну довжину пароля: уведений користувачем пароль має містити не менше ніж 6 символів.
 
+![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/password6.png)
 
+Якщо дані користувача відповідають усім вищезазначеним умовам, його дані будуть додані до файлу.
 
-![]()
-
-
-
-
-
-
-
-
-
-
-
-
-
+Файл *до* реєстрації нового користувача:
 ```javascript
 [{"email":"l.hromadiuk@gmail.com","password":"$2a$10$O3Dv7WZ/IOL09o5HHOjQkeOCVrkomMEU8ybQeV3uRmku0QLPN4.Yi"}]
 ```
+Безпосередньо сама реєстрація:
+![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/success.png)
 
-
-
-
-
-
-
-
+Файл *після* реєстрації нового користувача:
 ```javascript
 [{"email":"l.hromadiuk@gmail.com","password":"$2a$10$O3Dv7WZ/IOL09o5HHOjQkeOCVrkomMEU8ybQeV3uRmku0QLPN4.Yi"},
 
 {"email":"exampleee@gmail.com","password":"$2a$10$bOtqCNA4LwFVj7QPicHHd.5aPTu8oKY5eAhmLs1QWiEU.j7Ndimd."}]
 ```
+Легко помітити,що паролі не зберігаються у файлі у "звичайному" вигляді, вони хешуються та "підсолюються" (***salted hashing technique*** за допомогою <span style="color:turquoise"> bcrypt</span> )
+
+```javascript
+const salt = await bcrypt.genSalt(10);  
+const hashPassword = await bcrypt.hash(req.body.password, salt);
+```
+____
+## 2. Аутентифікація (*/user/login*)
