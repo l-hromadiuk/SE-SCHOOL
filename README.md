@@ -1,66 +1,64 @@
 # SE-SCHOOL
-## Практичне завдання
 
 ![](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white) 
 ![](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 
 
-Виконання цього практичного завдання передбачало реалізацію Web API для сервісу,який уможливить реєстрацію,автентифікацію користувачів через файлову систему, а також надання поточного курсу біткоіну автентифікованим користувачам.
+This practical task involved implementing a Web API for a service that will allow users to register, authenticate through the file system, and provide the current bitcoin rate to authenticated users.
 
-Для зручності поставлене завдання було розбите на підзадачі:
-- [X] ***Реєстрація нових користувачів (via email and password)***
-- [X] ***Автентифікація користувачів (за допомогою JSON Web Token)***
-- [X] ***Перевірка факту аутентифікації та надання відомостей про курс біткоіну***
+For convenience, the task was divided into subtasks:
+- [X] ***Registration of new users (via email and password)***
+- [X] ***User authentication (using JSON Web Token)***
+- [X] ***Checking the fact of authentication and providing information about the bitcoin rate***
   
-Завдання виконувалося мовою програмування **JavaScript**
+The task was performed in the programming language **JavaScript**.
   _____
-## 1. Реєстрація (*/user/create*)
+## 1. Registration (*/user/create*)
 
-Під час реєстрації користувач вводить свій email та пароль,після чого важливо перевірити,чи існує цей email  <ins>вже</ins> в"базі"(файл *users_info/users.json*) та не допустити повторного запису цих даних до файлу.
+When registering, the user enters his email and password, after which it is important to check whether this email <ins>already</ins> exists in the “database” (*users_info/users.json* file) and prevent this data from being rewritten to the file.
 
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/emailex.png)
 
-Також покладемо стандартне обмеження на мінімальну довжину пароля: уведений користувачем пароль має містити не менше ніж 6 символів.
+Also, let's put a standard restriction on the minimum password length: the password entered by the user must contain at least 6 characters.
 
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/password6.png)
 
-Якщо дані користувача відповідають усім вищезазначеним умовам, його дані будуть додані до файлу.
+If the user's data meets all of the above conditions, their data will be added to the file.
 
-Файл *до* реєстрації нового користувача:
+File *before* the new user is registered:
 ```javascript
-[{"email":"l.hromadiuk@gmail.com","password":"$2a$10$O3Dv7WZ/IOL09o5HHOjQkeOCVrkomMEU8ybQeV3uRmku0QLPN4.Yi"}]
+[{“email”: “l.hromadiuk@gmail.com”, “password”:“$2a$10$O3Dv7WZ/IOL09o5HHOjQkeOCVrkomMEU8ybQeV3uRmku0QLPN4.Yi”}]
 ```
-Безпосередньо сама реєстрація:
+Directly the registration itself:
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/success.png)
 
-Файл *після* реєстрації нового користувача:
-```javascript
-[{"email":"l.hromadiuk@gmail.com","password":"$2a$10$O3Dv7WZ/IOL09o5HHOjQkeOCVrkomMEU8ybQeV3uRmku0QLPN4.Yi"},
+The file *after* the registration of a new user:
+```javascript.
+[{“email”: “l.hromadiuk@gmail.com”, “password”:“$2a$10$O3Dv7WZ/IOL09o5HHOjQkeOCVrkomMEU8ybQeV3uRmku0QLPN4.Yi”},
 
-{"email":"exampleee@gmail.com","password":"$2a$10$bOtqCNA4LwFVj7QPicHHd.5aPTu8oKY5eAhmLs1QWiEU.j7Ndimd."}]
+{“email”: “exampleee@gmail.com”, “password”:“$2a$10$bOtqCNA4LwFVj7QPicHHd.5aPTu8oKY5eAhmLs1QWiEU.j7Ndimd.”}]
 ```
-Легко помітити,що паролі не зберігаються у файлі у "звичайному" вигляді, вони хешуються та "підсолюються" (***salted hashing technique*** за допомогою *bcrypt*).
+It's easy to see that passwords are not stored in the file in “plain” form, they are hashed and “salted” (***salted hashing technique*** using *bcrypt*).
 
 ```javascript
 const salt = await bcrypt.genSalt(10);  
 const hashPassword = await bcrypt.hash(req.body.password, salt);
 ```
 ____
-## 2. Автентифікація (*/user/login*)
-Виуонуючи процедури автентифікації, ми маємо ппересвідчитися в тому,що введений email існує у файлі (*users_info/users.json*):
+## 2. Authentication (*/user/login*)
+When performing authentication procedures, we need to make sure that the entered email exists in the file (*users_info/users.json*):
 
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/error%20email.png)
 
-За умови,що email існує, а введений пароль збігається з указаним при реєстрації,відбудеться успішний "вхід" в систему,а автентифікованому корисстувачу буде присвоєний ***JSON Web Token***(використовується файл .env,який з міркувань безпеки не був підвантажений на git :wink: )
+Provided that the email exists and the entered password matches the one specified during registration, the system will be successfully “logged in” and the authenticated user will be assigned a ***JSON Web Token*** (the .env file is used, which for security reasons was not uploaded to git :wink: )
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/token.png) 
 
 _______
-## 3.Курс біткоіну (*/btcRate*)
-Поточний курс біткоіну може отримати лише автентифікований користувач,саме для цієї перевірки і використовується JWT,який має бути розташований у *header 'login-token'* та збігатися з токеном,наданим при */user/login*.
+## 3.Bitcoin rate (*/btcRate*)
+The current bitcoin rate can be obtained only by an authenticated user, and this is the purpose of the JWT, which should be located in the *header 'login-token'* and match the token provided in */user/login*.
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/without%20token.png)
 
-Якщо усі дані збігаються,то користувач отримає поточний курс біткоіну. Для цього використовується сторонній [API](https://coinmarketcap.com/api/).
+If all the data matches, the user will receive the current bitcoin rate. For this purpose, a third-party [API] is used (https://coinmarketcap.com/api/).
 ![](https://github.com/l-hromadiuk/SE-SCHOOL/blob/main/screenshots%20for%20readme/btc.png) 
-____________
-## ***Резюме*** 
-У висновку слід зазначити,що,незважаючи на невеликий досвід роботи з JS,було реалізовано усі складники поставленої задачі :heavy_check_mark: ,розширено кругозір та отримано задоволення від розв'язання поставленої проблеми. 
+
+Translated with DeepL.com (free version)
